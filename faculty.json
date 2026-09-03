@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "Dr. Rajesh Kumar",
+    "department": "Computer Science and Engineering",
+    "email": "rajesh.kumar@example.com"
+  },
+  {
+    "id": 2,
+    "name": "Dr. Priya Sharma",
+    "department": "Information Technology",
+    "email": "priya.sharma@example.com"
+  },
+  {
+    "id": 3,
+    "name": "Dr. Amit Verma",
+    "department": "Computer Science and Engineering",
+    "email": "amit.verma@example.com"
+  }
+]

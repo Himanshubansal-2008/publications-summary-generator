@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "facultyId": 1,
+    "title": "Machine Learning in Healthcare",
+    "authors": ["Dr. Rajesh Kumar", "Dr. Amit Verma"],
+    "year": 2024,
+    "type": "Journal",
+    "venue": "International Journal of Artificial Intelligence",
+    "doi": "10.1234/example.001"
+  },
+  {
+    "id": 2,
+    "facultyId": 1,
+    "title": "Artificial Intelligence in Education",
+    "authors": ["Dr. Rajesh Kumar"],
+    "year": 2024,
+    "type": "Conference",
+    "venue": "IEEE International Conference on Computing",
+    "doi": "10.1234/example.002"
+  },
+  {
+    "id": 3,
+    "facultyId": 2,
+    "title": "Deep Learning for Image Processing",
+    "authors": ["Dr. Priya Sharma"],
+    "year": 2023,
+    "type": "Journal",
+    "venue": "Journal of Computer Science",
+    "doi": "10.1234/example.003"
+  },
+  {
+    "id": 4,
+    "facultyId": 3,
+    "title": "Cloud Computing Security",
+    "authors": ["Dr. Amit Verma"],
+    "year": 2024,
+    "type": "Conference",
+    "venue": "International Conference on Cloud Computing",
+    "doi": "10.1234/example.004"
+  }
+]
