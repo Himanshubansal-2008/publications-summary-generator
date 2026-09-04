@@ -3,18 +3,21 @@
     "id": 1,
     "name": "Dr. Rajesh Kumar",
     "department": "Computer Science and Engineering",
+    "designation": "Professor",
     "email": "rajesh.kumar@example.com"
   },
   {
     "id": 2,
     "name": "Dr. Priya Sharma",
     "department": "Information Technology",
+    "designation": "Associate Professor",
     "email": "priya.sharma@example.com"
   },
   {
     "id": 3,
     "name": "Dr. Amit Verma",
     "department": "Computer Science and Engineering",
+    "designation": "Professor",
     "email": "amit.verma@example.com"
   }
 ]
