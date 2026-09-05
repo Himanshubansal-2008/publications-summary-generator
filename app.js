@@ -85,6 +85,7 @@ async function addFaculty() {
   const email = await askQuestion("Enter email: ");
 
   // Generate new ID
+
   let newId = 1;
 
   if (faculty.length > 0) {
@@ -182,6 +183,7 @@ async function addPublication() {
   );
 
   // Generate new publication ID
+
   let newId = 1;
 
   if (publications.length > 0) {
@@ -189,6 +191,7 @@ async function addPublication() {
   }
 
   // Convert author string into an array
+
   const authors = authorsInput
     .split(",")
     .map((author) => author.trim());
@@ -207,6 +210,7 @@ async function addPublication() {
   publications.push(newPublication);
 
   // Save changes to JSON file
+
   savePublicationData();
 
   console.log("\nPublication added successfully!");
@@ -214,7 +218,6 @@ async function addPublication() {
 
   await pressEnterToContinue();
 }
-
 
 async function publicationManagement() {
   while (true) {
@@ -246,6 +249,180 @@ async function publicationManagement() {
   }
 }
 
+// SEARCH / FILTER
+
+// Display search/filter results
+
+function displayPublicationResults(results) {
+  console.log("\n========================================");
+  console.log("          Search Results");
+  console.log("========================================");
+
+  if (results.length === 0) {
+    console.log("No publications found.");
+  } else {
+    results.forEach((publication, index) => {
+      const facultyMember = faculty.find(
+        (member) => member.id === publication.facultyId
+      );
+
+      console.log(`${index + 1}. ${publication.title}`);
+      console.log(
+        `   Faculty: ${
+          facultyMember ? facultyMember.name : "Unknown"
+        }`
+      );
+      console.log(`   Year: ${publication.year}`);
+      console.log(`   Type: ${publication.type}`);
+      console.log(`   Venue: ${publication.venue}`);
+      console.log("----------------------------------------");
+    });
+  }
+}
+
+// Search by Faculty
+
+async function searchByFaculty() {
+  const facultyId = Number(
+    await askQuestion("Enter faculty ID: ")
+  );
+
+  const results = publications.filter(
+    (publication) => publication.facultyId === facultyId
+  );
+
+  displayPublicationResults(results);
+
+  await pressEnterToContinue();
+}
+
+// Filter by Year
+
+async function filterByYear() {
+  const year = Number(
+    await askQuestion("Enter year: ")
+  );
+
+  const results = publications.filter(
+    (publication) => publication.year === year
+  );
+
+  displayPublicationResults(results);
+
+  await pressEnterToContinue();
+}
+
+// Filter by Year Range
+
+async function filterByYearRange() {
+  const startYear = Number(
+    await askQuestion("Enter start year: ")
+  );
+
+  const endYear = Number(
+    await askQuestion("Enter end year: ")
+  );
+
+  const results = publications.filter(
+    (publication) =>
+      publication.year >= startYear &&
+      publication.year <= endYear
+  );
+
+  displayPublicationResults(results);
+
+  await pressEnterToContinue();
+}
+
+// Filter by Publication Type
+
+async function filterByType() {
+  const type = await askQuestion(
+    "Enter type (Journal / Conference): "
+  );
+
+  const results = publications.filter(
+    (publication) =>
+      publication.type.toLowerCase() ===
+      type.trim().toLowerCase()
+  );
+
+  displayPublicationResults(results);
+
+  await pressEnterToContinue();
+}
+
+// Search by Publication Title
+
+async function searchByTitle() {
+  const title = await askQuestion(
+    "Enter title to search: "
+  );
+
+  const results = publications.filter(
+    (publication) =>
+      publication.title
+        .toLowerCase()
+        .includes(title.trim().toLowerCase())
+  );
+
+  displayPublicationResults(results);
+
+  await pressEnterToContinue();
+}
+
+// Search / Filter Menu
+
+async function searchFilterMenu() {
+  while (true) {
+    console.log("\n========================================");
+    console.log("          Search / Filter");
+    console.log("========================================");
+    console.log("1. Search by Faculty");
+    console.log("2. Filter by Year");
+    console.log("3. Filter by Year Range");
+    console.log("4. Filter by Publication Type");
+    console.log("5. Search by Publication Title");
+    console.log("6. Show All Publications");
+    console.log("7. Back to Main Menu");
+    console.log("========================================");
+
+    const choice = await askQuestion("Enter your choice: ");
+
+    switch (choice.trim()) {
+      case "1":
+        await searchByFaculty();
+        break;
+
+      case "2":
+        await filterByYear();
+        break;
+
+      case "3":
+        await filterByYearRange();
+        break;
+
+      case "4":
+        await filterByType();
+        break;
+
+      case "5":
+        await searchByTitle();
+        break;
+
+      case "6":
+        await showPublications();
+        break;
+
+      case "7":
+        return;
+
+      default:
+        console.log("\nInvalid choice.");
+    }
+  }
+}
+
 // MAIN MENU
 
 async function mainMenu() {
@@ -255,7 +432,8 @@ async function mainMenu() {
     console.log("========================================");
     console.log("1. Faculty Management");
     console.log("2. Publication Management");
-    console.log("3. Exit");
+    console.log("3. Search / Filter");
+    console.log("4. Exit");
     console.log("========================================");
 
     const choice = await askQuestion("Enter your choice: ");
@@ -270,7 +448,13 @@ async function mainMenu() {
         break;
 
       case "3":
-        console.log("\nThank you for using Publications Summary Generator.");
+        await searchFilterMenu();
+        break;
+
+      case "4":
+        console.log(
+          "\nThank you for using Publications Summary Generator."
+        );
         rl.close();
         return;
 
