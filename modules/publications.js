@@ -171,4 +171,9 @@ async function publicationManagement({
   }
 }
 
-module.exports = publicationManagement;
+module.exports = {
+  publicationManagement,
+  showPublications,
+};
+
+// showPublications is separately exported becauase to use this in search/filter
