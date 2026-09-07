@@ -1,5 +1,6 @@
 const fs = require("fs");
 const readline = require("readline");
+const XLSX = require("xlsx");
 
 // READ JSON FILES
 
@@ -53,6 +54,7 @@ function savePublicationData() {
 }
 
 // FACULTY MANAGEMENT
+// SHOW FACULTY
 
 async function showFaculty() {
   console.log("\n========================================");
@@ -293,6 +295,7 @@ async function addPublication() {
 
   const venue = await askQuestion("Enter venue: ");
   const doi = await askQuestion("Enter DOI: ");
+
   const authorsInput = await askQuestion(
     "Enter authors (separated by commas): "
   );
@@ -333,6 +336,8 @@ async function addPublication() {
 
   await pressEnterToContinue();
 }
+
+// PUBLICATION MANAGEMENT MENU
 
 async function publicationManagement() {
   while (true) {
@@ -943,6 +948,185 @@ async function generateFacultySummary() {
   await pressEnterToContinue();
 }
 
+// ========================================
+// DAY 5 - EXCEL EXPORT
+// ========================================
+
+// EXPORT PUBLICATION SUMMARY TO EXCEL
+
+function exportToExcel(facultyId) {
+
+  const selectedFaculty = getFacultyById(facultyId);
+
+  // Check if faculty exists
+
+  if (!selectedFaculty) {
+    console.log("\nFaculty not found.");
+    return;
+  }
+
+  // Get publications of selected faculty
+
+  const facultyPublications =
+    getFacultyPublications(facultyId);
+
+  // Check if publications exist
+
+  if (facultyPublications.length === 0) {
+    console.log(
+      `\nNo publications found for ${selectedFaculty.name}.`
+    );
+    return;
+  }
+
+  // Store data that will go into Excel
+
+  const summaryData = [];
+
+  // Get unique publication years
+
+  const years = [
+    ...new Set(
+      facultyPublications.map(
+        (publication) => publication.year
+      )
+    )
+  ];
+
+  // Sort years from oldest to newest
+
+  years.sort((a, b) => a - b);
+
+  // Create one row for each year
+
+  years.forEach((year) => {
+
+    const yearPublications =
+      facultyPublications.filter(
+        (publication) =>
+          publication.year === year
+      );
+
+    // Count journals
+
+    const journalCount =
+      yearPublications.filter(
+        (publication) =>
+          publication.type.toLowerCase() === "journal"
+      ).length;
+
+    // Count conferences
+
+    const conferenceCount =
+      yearPublications.filter(
+        (publication) =>
+          publication.type.toLowerCase() === "conference"
+      ).length;
+
+    // Add data to summaryData
+
+    summaryData.push({
+      Year: year,
+      Journals: journalCount,
+      Conferences: conferenceCount,
+      Total: journalCount + conferenceCount
+    });
+  });
+
+  // Create Excel workbook
+
+  const workbook = XLSX.utils.book_new();
+
+  // Convert JavaScript data into Excel worksheet
+
+  const worksheet =
+    XLSX.utils.json_to_sheet(summaryData);
+
+  // Add worksheet to workbook
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    worksheet,
+    "Publication Summary"
+  );
+
+  // Create reports folder if it does not exist
+
+  if (!fs.existsSync("reports")) {
+    fs.mkdirSync("reports");
+  }
+
+  // Create file name
+
+  const fileName =
+    `faculty_${facultyId}_publication_summary.xlsx`;
+
+  // Create complete file path
+
+  const filePath =
+    `reports/${fileName}`;
+
+  // Save Excel file inside reports folder
+
+  XLSX.writeFile(
+    workbook,
+    filePath
+  );
+
+  console.log(
+    "\n✓ Excel file exported successfully!"
+  );
+
+  console.log(
+    `Faculty: ${selectedFaculty.name}`
+  );
+
+  console.log(
+    `File: ${filePath}`
+  );
+}
+
+// EXPORT MENU
+
+async function exportMenu() {
+
+  while (true) {
+
+    console.log("\n========================================");
+    console.log("        Export Publication Summary");
+    console.log("========================================");
+    console.log("1. Export to Excel");
+    console.log("2. Back to Main Menu");
+    console.log("========================================");
+
+    const choice =
+      await askQuestion("Enter your choice: ");
+
+    switch (choice) {
+
+      case "1": {
+
+        showAvailableFaculty();
+
+        const facultyId = Number(
+          await askQuestion("\nEnter Faculty ID: ")
+        );
+
+        exportToExcel(facultyId);
+
+        await pressEnterToContinue();
+
+        break;
+      }
+
+      case "2":
+        return;
+
+      default:
+        console.log("\nInvalid choice.");
+    }
+  }
+}
 
 // PUBLICATION SUMMARY MENU
 
@@ -986,8 +1170,9 @@ async function summaryMenu() {
   }
 }
 
-
+// ========================================
 // MAIN MENU
+// ========================================
 
 async function mainMenu() {
 
@@ -1000,7 +1185,8 @@ async function mainMenu() {
     console.log("2. Publication Management");
     console.log("3. Search / Filter");
     console.log("4. Publication Summary");
-    console.log("5. Exit");
+    console.log("5. Export");
+    console.log("6. Exit");
     console.log("========================================");
 
     const choice = await askQuestion(
@@ -1026,14 +1212,21 @@ async function mainMenu() {
         break;
 
       case "5":
+        await exportMenu();
+        break;
+
+      case "6":
+
         console.log(
           "\nThank you for using Publications Summary Generator."
         );
 
         rl.close();
+
         return;
 
       default:
+
         console.log(
           "\nInvalid choice. Please try again."
         );
