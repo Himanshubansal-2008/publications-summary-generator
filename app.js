@@ -2,7 +2,20 @@ const fs = require("fs");
 const readline = require("readline");
 const XLSX = require("xlsx");
 
+const {
+  Document,
+  Packer,
+  Paragraph,
+  HeadingLevel,
+  Table,
+  TableRow,
+  TableCell,
+  WidthType,
+} = require("docx");
+
+// ========================================
 // READ JSON FILES
+// ========================================
 
 const facultyData = fs.readFileSync("faculty.json", "utf-8");
 const publicationData = fs.readFileSync("publications.json", "utf-8");
@@ -12,14 +25,18 @@ const publicationData = fs.readFileSync("publications.json", "utf-8");
 const faculty = JSON.parse(facultyData);
 const publications = JSON.parse(publicationData);
 
+// ========================================
 // CREATE TERMINAL INTERFACE
+// ========================================
 
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
+// ========================================
 // HELPER FUNCTION FOR USER INPUT
+// ========================================
 
 function askQuestion(question) {
   return new Promise((resolve) => {
@@ -29,13 +46,17 @@ function askQuestion(question) {
   });
 }
 
+// ========================================
 // PRESS ENTER TO CONTINUE
+// ========================================
 
 async function pressEnterToContinue() {
   await askQuestion("\nPress Enter to continue...");
 }
 
+// ========================================
 // SAVE FACULTY DATA
+// ========================================
 
 function saveFacultyData() {
   fs.writeFileSync(
@@ -44,7 +65,9 @@ function saveFacultyData() {
   );
 }
 
+// ========================================
 // SAVE PUBLICATION DATA
+// ========================================
 
 function savePublicationData() {
   fs.writeFileSync(
@@ -53,7 +76,10 @@ function savePublicationData() {
   );
 }
 
+// ========================================
 // FACULTY MANAGEMENT
+// ========================================
+
 // SHOW FACULTY
 
 async function showFaculty() {
@@ -76,7 +102,6 @@ async function showFaculty() {
 
   await pressEnterToContinue();
 }
-
 
 // ADD FACULTY
 
@@ -103,7 +128,7 @@ async function addFaculty() {
     name: name,
     department: department,
     designation: designation,
-    email: email
+    email: email,
   };
 
   faculty.push(newFaculty);
@@ -117,7 +142,6 @@ async function addFaculty() {
 
   await pressEnterToContinue();
 }
-
 
 // UPDATE FACULTY
 
@@ -184,7 +208,6 @@ async function updateFaculty() {
   await pressEnterToContinue();
 }
 
-
 // FACULTY MANAGEMENT MENU
 
 async function facultyManagement() {
@@ -222,8 +245,9 @@ async function facultyManagement() {
   }
 }
 
-
+// ========================================
 // PUBLICATION MANAGEMENT
+// ========================================
 
 // SHOW PUBLICATIONS
 
@@ -250,7 +274,6 @@ async function showPublications() {
 
   await pressEnterToContinue();
 }
-
 
 // ADD PUBLICATION
 
@@ -322,7 +345,7 @@ async function addPublication() {
     year: year,
     venue: venue,
     doi: doi,
-    authors: authors
+    authors: authors,
   };
 
   publications.push(newPublication);
@@ -369,7 +392,9 @@ async function publicationManagement() {
   }
 }
 
+// ========================================
 // SEARCH / FILTER
+// ========================================
 
 // DISPLAY SEARCH RESULTS
 
@@ -382,7 +407,6 @@ function displayPublicationResults(results) {
     console.log("No publications found.");
   } else {
     results.forEach((publication, index) => {
-
       const facultyMember = faculty.find(
         (member) => member.id === publication.facultyId
       );
@@ -407,7 +431,6 @@ function displayPublicationResults(results) {
 // SEARCH BY FACULTY
 
 async function searchByFaculty() {
-
   console.log("\nAvailable Faculty:");
 
   faculty.forEach((member) => {
@@ -427,11 +450,9 @@ async function searchByFaculty() {
   await pressEnterToContinue();
 }
 
-
 // FILTER BY YEAR
 
 async function filterByYear() {
-
   const year = Number(
     await askQuestion("Enter year: ")
   );
@@ -451,11 +472,9 @@ async function filterByYear() {
   await pressEnterToContinue();
 }
 
-
 // FILTER BY YEAR RANGE
 
 async function filterByYearRange() {
-
   const startYear = Number(
     await askQuestion("Enter start year: ")
   );
@@ -490,11 +509,9 @@ async function filterByYearRange() {
   await pressEnterToContinue();
 }
 
-
 // FILTER BY PUBLICATION TYPE
 
 async function filterByType() {
-
   const type = await askQuestion(
     "Enter type (Journal / Conference): "
   );
@@ -510,11 +527,9 @@ async function filterByType() {
   await pressEnterToContinue();
 }
 
-
 // SEARCH BY PUBLICATION TITLE
 
 async function searchByTitle() {
-
   const title = await askQuestion(
     "Enter title to search: "
   );
@@ -531,13 +546,10 @@ async function searchByTitle() {
   await pressEnterToContinue();
 }
 
-
 // SEARCH / FILTER MENU
 
 async function searchFilterMenu() {
-
   while (true) {
-
     console.log("\n========================================");
     console.log("          Search / Filter");
     console.log("========================================");
@@ -555,7 +567,6 @@ async function searchFilterMenu() {
     );
 
     switch (choice) {
-
       case "1":
         await searchByFaculty();
         break;
@@ -589,34 +600,30 @@ async function searchFilterMenu() {
   }
 }
 
-
+// ========================================
 // PUBLICATION SUMMARY
+// ========================================
 
 // GET FACULTY BY ID
 
 function getFacultyById(facultyId) {
-
   return faculty.find(
     (member) => member.id === facultyId
   );
 }
 
-
 // GET FACULTY PUBLICATIONS
 
 function getFacultyPublications(facultyId) {
-
   return publications.filter(
     (publication) =>
       publication.facultyId === facultyId
   );
 }
 
-
 // SHOW AVAILABLE FACULTY
 
 function showAvailableFaculty() {
-
   console.log("\nAvailable Faculty:");
 
   faculty.forEach((member) => {
@@ -624,11 +631,9 @@ function showAvailableFaculty() {
   });
 }
 
-
 // YEAR-WISE SUMMARY
 
 async function generateYearWiseSummary() {
-
   console.log("\n========================================");
   console.log("       Year-wise Publication Summary");
   console.log("========================================");
@@ -642,9 +647,7 @@ async function generateYearWiseSummary() {
   const facultyMember = getFacultyById(facultyId);
 
   if (!facultyMember) {
-
     console.log("\nFaculty not found.");
-
     await pressEnterToContinue();
     return;
   }
@@ -653,7 +656,6 @@ async function generateYearWiseSummary() {
     getFacultyPublications(facultyId);
 
   if (facultyPublications.length === 0) {
-
     console.log(
       `\nNo publications found for ${facultyMember.name}.`
     );
@@ -669,7 +671,7 @@ async function generateYearWiseSummary() {
       facultyPublications.map(
         (publication) => publication.year
       )
-    )
+    ),
   ];
 
   // Sort years
@@ -690,7 +692,6 @@ async function generateYearWiseSummary() {
   let totalConference = 0;
 
   years.forEach((year) => {
-
     const yearPublications =
       facultyPublications.filter(
         (publication) =>
@@ -732,11 +733,9 @@ async function generateYearWiseSummary() {
   await pressEnterToContinue();
 }
 
-
 // CUSTOM YEAR RANGE SUMMARY
 
 async function generateCustomRangeSummary() {
-
   console.log("\n========================================");
   console.log("       Custom Publication Summary");
   console.log("========================================");
@@ -750,9 +749,7 @@ async function generateCustomRangeSummary() {
   const facultyMember = getFacultyById(facultyId);
 
   if (!facultyMember) {
-
     console.log("\nFaculty not found.");
-
     await pressEnterToContinue();
     return;
   }
@@ -766,15 +763,12 @@ async function generateCustomRangeSummary() {
   );
 
   if (isNaN(startYear) || isNaN(endYear)) {
-
     console.log("\nPlease enter valid years.");
-
     await pressEnterToContinue();
     return;
   }
 
   if (startYear > endYear) {
-
     console.log(
       "\nStart year cannot be greater than end year."
     );
@@ -797,7 +791,6 @@ async function generateCustomRangeSummary() {
   let conferenceCount = 0;
 
   results.forEach((publication) => {
-
     if (
       publication.type.toLowerCase() === "journal"
     ) {
@@ -839,7 +832,6 @@ async function generateCustomRangeSummary() {
   console.log("----------------------------------------");
 
   if (results.length === 0) {
-
     console.log(
       "\nNo publications found in this period."
     );
@@ -848,11 +840,9 @@ async function generateCustomRangeSummary() {
   await pressEnterToContinue();
 }
 
-
 // FACULTY PUBLICATION SUMMARY
 
 async function generateFacultySummary() {
-
   console.log("\n========================================");
   console.log("        Faculty Publication Summary");
   console.log("========================================");
@@ -866,9 +856,7 @@ async function generateFacultySummary() {
   const facultyMember = getFacultyById(facultyId);
 
   if (!facultyMember) {
-
     console.log("\nFaculty not found.");
-
     await pressEnterToContinue();
     return;
   }
@@ -877,7 +865,6 @@ async function generateFacultySummary() {
     getFacultyPublications(facultyId);
 
   if (facultyPublications.length === 0) {
-
     console.log(
       `\nNo publications found for ${facultyMember.name}.`
     );
@@ -929,13 +916,12 @@ async function generateFacultySummary() {
       facultyPublications.map(
         (publication) => publication.year
       )
-    )
+    ),
   ];
 
   years.sort((a, b) => a - b);
 
   years.forEach((year) => {
-
     const count =
       facultyPublications.filter(
         (publication) =>
@@ -955,7 +941,6 @@ async function generateFacultySummary() {
 // EXPORT PUBLICATION SUMMARY TO EXCEL
 
 function exportToExcel(facultyId) {
-
   const selectedFaculty = getFacultyById(facultyId);
 
   // Check if faculty exists
@@ -990,7 +975,7 @@ function exportToExcel(facultyId) {
       facultyPublications.map(
         (publication) => publication.year
       )
-    )
+    ),
   ];
 
   // Sort years from oldest to newest
@@ -1000,7 +985,6 @@ function exportToExcel(facultyId) {
   // Create one row for each year
 
   years.forEach((year) => {
-
     const yearPublications =
       facultyPublications.filter(
         (publication) =>
@@ -1029,7 +1013,7 @@ function exportToExcel(facultyId) {
       Year: year,
       Journals: journalCount,
       Conferences: conferenceCount,
-      Total: journalCount + conferenceCount
+      Total: journalCount + conferenceCount,
     });
   });
 
@@ -1086,17 +1070,253 @@ function exportToExcel(facultyId) {
   );
 }
 
+// ========================================
+// DAY 5 - WORD EXPORT
+// ========================================
+
+// EXPORT PUBLICATION SUMMARY TO WORD
+
+async function exportToWord(facultyId) {
+  const selectedFaculty = getFacultyById(facultyId);
+
+  // Check if faculty exists
+
+  if (!selectedFaculty) {
+    console.log("\nFaculty not found.");
+    return;
+  }
+
+  // Get publications of selected faculty
+
+  const facultyPublications =
+    getFacultyPublications(facultyId);
+
+  // Check if publications exist
+
+  if (facultyPublications.length === 0) {
+    console.log(
+      `\nNo publications found for ${selectedFaculty.name}.`
+    );
+    return;
+  }
+
+  // Get unique publication years
+
+  const years = [
+    ...new Set(
+      facultyPublications.map(
+        (publication) => publication.year
+      )
+    ),
+  ];
+
+  // Sort years
+
+  years.sort((a, b) => a - b);
+
+  // Create summary data
+
+  const summaryData = [];
+
+  years.forEach((year) => {
+    const yearPublications =
+      facultyPublications.filter(
+        (publication) =>
+          publication.year === year
+      );
+
+    const journalCount =
+      yearPublications.filter(
+        (publication) =>
+          publication.type.toLowerCase() === "journal"
+      ).length;
+
+    const conferenceCount =
+      yearPublications.filter(
+        (publication) =>
+          publication.type.toLowerCase() === "conference"
+      ).length;
+
+    summaryData.push({
+      year: year,
+      journals: journalCount,
+      conferences: conferenceCount,
+      total: journalCount + conferenceCount,
+    });
+  });
+
+  // Create Word document
+
+  const document = new Document({
+    sections: [
+      {
+        children: [
+          new Paragraph({
+            text: "Publication Summary",
+            heading: HeadingLevel.TITLE,
+          }),
+
+          new Paragraph({
+            text: `Faculty: ${selectedFaculty.name}`,
+          }),
+
+          new Paragraph({
+            text: `Department: ${selectedFaculty.department}`,
+          }),
+
+          new Paragraph({
+            text: `Designation: ${selectedFaculty.designation}`,
+          }),
+
+          new Paragraph({
+            text: `Email: ${selectedFaculty.email}`,
+          }),
+
+          new Paragraph({
+            text: "",
+          }),
+
+          new Paragraph({
+            text: "Year-wise Publication Summary",
+            heading: HeadingLevel.HEADING_1,
+          }),
+
+          new Table({
+            width: {
+              size: 100,
+              type: WidthType.PERCENTAGE,
+            },
+
+            rows: [
+              // Table Header
+
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [
+                      new Paragraph("Year"),
+                    ],
+                  }),
+
+                  new TableCell({
+                    children: [
+                      new Paragraph("Journals"),
+                    ],
+                  }),
+
+                  new TableCell({
+                    children: [
+                      new Paragraph("Conferences"),
+                    ],
+                  }),
+
+                  new TableCell({
+                    children: [
+                      new Paragraph("Total"),
+                    ],
+                  }),
+                ],
+              }),
+
+              // Table Data
+
+              ...summaryData.map((data) => {
+                return new TableRow({
+                  children: [
+                    new TableCell({
+                      children: [
+                        new Paragraph(
+                          String(data.year)
+                        ),
+                      ],
+                    }),
+
+                    new TableCell({
+                      children: [
+                        new Paragraph(
+                          String(data.journals)
+                        ),
+                      ],
+                    }),
+
+                    new TableCell({
+                      children: [
+                        new Paragraph(
+                          String(data.conferences)
+                        ),
+                      ],
+                    }),
+
+                    new TableCell({
+                      children: [
+                        new Paragraph(
+                          String(data.total)
+                        ),
+                      ],
+                    }),
+                  ],
+                });
+              }),
+            ],
+          }),
+        ],
+      },
+    ],
+  });
+
+  // Create reports folder if it does not exist
+
+  if (!fs.existsSync("reports")) {
+    fs.mkdirSync("reports");
+  }
+
+  // Create file name
+
+  const fileName =
+    `faculty_${facultyId}_publication_summary.docx`;
+
+  // Create complete file path
+
+  const filePath =
+    `reports/${fileName}`;
+
+  // Convert document to Word file
+
+  const buffer =
+    await Packer.toBuffer(document);
+
+  // Save Word file
+
+  fs.writeFileSync(
+    filePath,
+    buffer
+  );
+
+  console.log(
+    "\n✓ Word file exported successfully!"
+  );
+
+  console.log(
+    `Faculty: ${selectedFaculty.name}`
+  );
+
+  console.log(
+    `File: ${filePath}`
+  );
+}
+
+// ========================================
 // EXPORT MENU
+// ========================================
 
 async function exportMenu() {
-
   while (true) {
-
     console.log("\n========================================");
     console.log("        Export Publication Summary");
     console.log("========================================");
     console.log("1. Export to Excel");
-    console.log("2. Back to Main Menu");
+    console.log("2. Export to Word");
+    console.log("3. Back to Main Menu");
     console.log("========================================");
 
     const choice =
@@ -1104,8 +1324,9 @@ async function exportMenu() {
 
     switch (choice) {
 
-      case "1": {
+      // EXPORT TO EXCEL
 
+      case "1": {
         showAvailableFaculty();
 
         const facultyId = Number(
@@ -1119,7 +1340,25 @@ async function exportMenu() {
         break;
       }
 
-      case "2":
+      // EXPORT TO WORD
+
+      case "2": {
+        showAvailableFaculty();
+
+        const facultyId = Number(
+          await askQuestion("\nEnter Faculty ID: ")
+        );
+
+        await exportToWord(facultyId);
+
+        await pressEnterToContinue();
+
+        break;
+      }
+
+      // BACK TO MAIN MENU
+
+      case "3":
         return;
 
       default:
@@ -1128,12 +1367,12 @@ async function exportMenu() {
   }
 }
 
+// ========================================
 // PUBLICATION SUMMARY MENU
+// ========================================
 
 async function summaryMenu() {
-
   while (true) {
-
     console.log("\n========================================");
     console.log("        Publication Summary");
     console.log("========================================");
@@ -1175,9 +1414,7 @@ async function summaryMenu() {
 // ========================================
 
 async function mainMenu() {
-
   while (true) {
-
     console.log("\n========================================");
     console.log("   Publications Summary Generator");
     console.log("========================================");
@@ -1216,7 +1453,6 @@ async function mainMenu() {
         break;
 
       case "6":
-
         console.log(
           "\nThank you for using Publications Summary Generator."
         );
@@ -1226,7 +1462,6 @@ async function mainMenu() {
         return;
 
       default:
-
         console.log(
           "\nInvalid choice. Please try again."
         );
@@ -1234,6 +1469,8 @@ async function mainMenu() {
   }
 }
 
+// ========================================
 // START APPLICATION
+// ========================================
 
 mainMenu();
