@@ -12,11 +12,17 @@ const {
   showPublications,
 } = require("./modules/publications");
 
-const searchFilterMenu = require("./modules/search");
+const searchFilterMenu =
+  require("./modules/search");
 
-const summaryMenu = require("./modules/summary");
+const summaryMenu =
+  require("./modules/summary");
 
-const exportMenu = require("./modules/export");
+const exportMenu =
+  require("./modules/export");
+
+const importMenu =
+  require("./modules/import");
 
 // ========================================
 // READ JSON FILES
@@ -34,8 +40,11 @@ const publicationData = fs.readFileSync(
 
 // Convert JSON text into JavaScript arrays
 
-const faculty = JSON.parse(facultyData);
-const publications = JSON.parse(publicationData);
+const faculty =
+  JSON.parse(facultyData);
+
+const publications =
+  JSON.parse(publicationData);
 
 // ========================================
 // CREATE TERMINAL INTERFACE
@@ -52,9 +61,12 @@ const rl = readline.createInterface({
 
 function askQuestion(question) {
   return new Promise((resolve) => {
-    rl.question(question, (answer) => {
-      resolve(answer.trim());
-    });
+    rl.question(
+      question,
+      (answer) => {
+        resolve(answer.trim());
+      }
+    );
   });
 }
 
@@ -63,7 +75,9 @@ function askQuestion(question) {
 // ========================================
 
 async function pressEnterToContinue() {
-  await askQuestion("\nPress Enter to continue...");
+  await askQuestion(
+    "\nPress Enter to continue..."
+  );
 }
 
 // ========================================
@@ -73,14 +87,22 @@ async function pressEnterToContinue() {
 function saveFacultyData() {
   fs.writeFileSync(
     "faculty.json",
-    JSON.stringify(faculty, null, 2)
+    JSON.stringify(
+      faculty,
+      null,
+      2
+    )
   );
 }
 
 function savePublicationData() {
   fs.writeFileSync(
     "publications.json",
-    JSON.stringify(publications, null, 2)
+    JSON.stringify(
+      publications,
+      null,
+      2
+    )
   );
 }
 
@@ -90,20 +112,54 @@ function savePublicationData() {
 
 async function mainMenu() {
   while (true) {
-    console.log("\n========================================");
-    console.log("   Publications Summary Generator");
-    console.log("========================================");
-    console.log("1. Faculty Management");
-    console.log("2. Publication Management");
-    console.log("3. Search / Filter");
-    console.log("4. Publication Summary");
-    console.log("5. Export");
-    console.log("6. Exit");
-    console.log("========================================");
-
-    const choice = await askQuestion(
-      "Enter your choice: "
+    console.log(
+      "\n========================================"
     );
+
+    console.log(
+      "   Publications Summary Generator"
+    );
+
+    console.log(
+      "========================================"
+    );
+
+    console.log(
+      "1. Faculty Management"
+    );
+
+    console.log(
+      "2. Publication Management"
+    );
+
+    console.log(
+      "3. Search / Filter"
+    );
+
+    console.log(
+      "4. Publication Summary"
+    );
+
+    console.log(
+      "5. Export"
+    );
+
+    console.log(
+      "6. Import"
+    );
+
+    console.log(
+      "7. Exit"
+    );
+
+    console.log(
+      "========================================"
+    );
+
+    const choice =
+      await askQuestion(
+        "Enter your choice: "
+      );
 
     switch (choice) {
 
@@ -128,6 +184,7 @@ async function mainMenu() {
           pressEnterToContinue,
           savePublicationData,
         });
+
         break;
 
       // SEARCH / FILTER
@@ -140,6 +197,7 @@ async function mainMenu() {
           pressEnterToContinue,
           showPublications,
         });
+
         break;
 
       // PUBLICATION SUMMARY
@@ -151,6 +209,7 @@ async function mainMenu() {
           askQuestion,
           pressEnterToContinue,
         });
+
         break;
 
       // EXPORT
@@ -162,11 +221,24 @@ async function mainMenu() {
           askQuestion,
           pressEnterToContinue,
         });
+
+        break;
+
+      case "6":
+        await importMenu({
+          faculty,
+          publications,
+          askQuestion,
+          pressEnterToContinue,
+          saveFacultyData,
+          savePublicationData,
+        });
+
         break;
 
       // EXIT
 
-      case "6":
+      case "7":
         console.log(
           "\nThank you for using Publications Summary Generator."
         );

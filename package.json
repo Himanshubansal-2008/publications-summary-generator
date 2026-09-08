@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "bibtex-parse-js": "^0.0.24",
     "docx": "^9.7.1",
     "xlsx": "^0.18.5"
   }
