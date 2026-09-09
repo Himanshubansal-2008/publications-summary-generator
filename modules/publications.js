@@ -18,7 +18,7 @@ async function showPublications({
     publications.forEach((publication) => {
       console.log(`ID: ${publication.id}`);
       console.log(`Title: ${publication.title}`);
-      console.log(`Faculty ID: ${publication.facultyId}`);
+      console.log(`Faculty IDs: ${publication.facultyIds.join(", ")}`);
       console.log(`Type: ${publication.type}`);
       console.log(`Year: ${publication.year}`);
       console.log(`Venue: ${publication.venue}`);
@@ -54,18 +54,24 @@ async function addPublication({
     console.log(`${member.id}. ${member.name}`);
   });
 
-  const facultyId = Number(
-    await askQuestion("Enter faculty ID: ")
+  const facultyInput = await askQuestion(
+    "Enter faculty IDs separated by commas: "
   );
 
-  // Check if faculty exists
+  // Convert faculty IDs into an array
 
-  const facultyExists = faculty.some(
-    (member) => member.id === facultyId
+  const facultyIds = facultyInput
+    .split(",")
+    .map((id) => Number(id.trim()));
+
+  // Check if all faculty exist
+
+  const facultyExists = facultyIds.every((facultyId) =>
+    faculty.some((member) => member.id === facultyId)
   );
 
   if (!facultyExists) {
-    console.log("\nFaculty not found.");
+    console.log("\nOne or more faculty members not found.");
     await pressEnterToContinue();
     return;
   }
@@ -102,7 +108,7 @@ async function addPublication({
   const newPublication = {
     id: newId,
     title: title,
-    facultyId: facultyId,
+    facultyIds: facultyIds,
     type: type,
     year: year,
     venue: venue,

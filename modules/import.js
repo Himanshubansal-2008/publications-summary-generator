@@ -209,9 +209,9 @@ async function importBibTeX({
           ].id + 1;
       }
 
-      // Try to find faculty from authors
+      // Find all faculty members from authors
 
-      let facultyId = null;
+      const facultyIds = [];
 
       for (const author of authors) {
         const matchedFaculty =
@@ -222,10 +222,9 @@ async function importBibTeX({
           );
 
         if (matchedFaculty) {
-          facultyId =
-            matchedFaculty.id;
-
-          break;
+          facultyIds.push(
+            matchedFaculty.id
+          );
         }
       }
 
@@ -234,7 +233,7 @@ async function importBibTeX({
       const newPublication = {
         id: newId,
         title: title,
-        facultyId: facultyId,
+        facultyIds: facultyIds,
         type: type,
         year: year,
         venue: venue,

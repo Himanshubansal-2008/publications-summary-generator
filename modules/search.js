@@ -17,15 +17,17 @@ function displayPublicationResults({
     console.log("No publications found.");
   } else {
     results.forEach((publication, index) => {
-      const facultyMember = faculty.find(
-        (member) => member.id === publication.facultyId
+      const facultyMembers = faculty.filter(
+        (member) => publication.facultyIds.includes(member.id)
       );
 
       console.log(`${index + 1}. ${publication.title}`);
 
       console.log(
         `   Faculty: ${
-          facultyMember ? facultyMember.name : "Unknown"
+          facultyMembers.length > 0
+            ? facultyMembers.map((member) => member.name).join(", ")
+            : "Unknown"
         }`
       );
 
@@ -58,7 +60,7 @@ async function searchByFaculty({
   );
 
   const results = publications.filter(
-    (publication) => publication.facultyId === facultyId
+    (publication) => publication.facultyIds.includes(facultyId)
   );
 
   displayPublicationResults({

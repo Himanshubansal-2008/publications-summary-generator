@@ -36,7 +36,7 @@ function getFacultyPublications(
 ) {
   return publications.filter(
     (publication) =>
-      publication.facultyId === facultyId
+      publication.facultyIds.includes(facultyId)
   );
 }
 
@@ -316,8 +316,7 @@ async function exportToWord({
 
           new Paragraph({
             text: "Year-wise Publication Summary",
-            heading:
-              HeadingLevel.HEADING_1,
+            heading: HeadingLevel.HEADING_1,
           }),
 
           new Table({

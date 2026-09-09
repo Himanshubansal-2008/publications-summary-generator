@@ -18,7 +18,7 @@ function getFacultyPublications(
 ) {
   return publications.filter(
     (publication) =>
-      publication.facultyId === facultyId
+      publication.facultyIds.includes(facultyId)
   );
 }
 
