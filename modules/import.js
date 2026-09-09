@@ -15,6 +15,10 @@ async function importFacultyFromExcel({
   console.log("        Import Faculty from Excel");
   console.log("========================================");
 
+  console.log(
+    "\nTip: Drag the Excel file into Terminal to get its path."
+  );
+
   const filePath = await askQuestion(
     "Enter Excel file path: "
   );
@@ -112,6 +116,10 @@ async function importBibTeX({
   console.log("\n========================================");
   console.log("        Import Publications from BibTeX");
   console.log("========================================");
+
+  console.log(
+    "\nTip: Drag the BibTeX file into Terminal to get its path."
+  );
 
   const filePath = await askQuestion(
     "Enter BibTeX file path: "
