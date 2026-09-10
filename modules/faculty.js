@@ -2,15 +2,27 @@
 // FACULTY MANAGEMENT
 // ========================================
 
+const chalk = require("chalk");
+
+// ========================================
 // SHOW FACULTY
+// ========================================
 
 async function showFaculty({ faculty, pressEnterToContinue }) {
-  console.log("\n========================================");
-  console.log("           Faculty Members");
-  console.log("========================================");
+  console.log(
+    chalk.cyan("\n========================================")
+  );
+  console.log(
+    chalk.bold.cyan("           Faculty Members")
+  );
+  console.log(
+    chalk.cyan("========================================")
+  );
 
   if (faculty.length === 0) {
-    console.log("No faculty members found.");
+    console.log(
+      chalk.yellow("No faculty members found.")
+    );
   } else {
     faculty.forEach((member) => {
       console.log(`ID: ${member.id}`);
@@ -18,15 +30,19 @@ async function showFaculty({ faculty, pressEnterToContinue }) {
       console.log(`Department: ${member.department}`);
       console.log(`Designation: ${member.designation}`);
       console.log(`Email: ${member.email}`);
-      console.log("----------------------------------------");
+
+      console.log(
+        chalk.cyan("----------------------------------------")
+      );
     });
   }
 
   await pressEnterToContinue();
 }
 
-
+// ========================================
 // ADD FACULTY
+// ========================================
 
 async function addFaculty({
   faculty,
@@ -34,21 +50,39 @@ async function addFaculty({
   pressEnterToContinue,
   saveFacultyData,
 }) {
-  console.log("\n========================================");
-  console.log("             Add Faculty");
-  console.log("========================================");
+  console.log(
+    chalk.cyan("\n========================================")
+  );
+  console.log(
+    chalk.bold.cyan("             Add Faculty")
+  );
+  console.log(
+    chalk.cyan("========================================")
+  );
 
-  const name = await askQuestion("Enter name: ");
-  const department = await askQuestion("Enter department: ");
-  const designation = await askQuestion("Enter designation: ");
-  const email = await askQuestion("Enter email: ");
+  const name = await askQuestion(
+    chalk.yellow("Enter name: ")
+  );
+
+  const department = await askQuestion(
+    chalk.yellow("Enter department: ")
+  );
+
+  const designation = await askQuestion(
+    chalk.yellow("Enter designation: ")
+  );
+
+  const email = await askQuestion(
+    chalk.yellow("Enter email: ")
+  );
 
   // Generate new ID
 
   let newId = 1;
 
   if (faculty.length > 0) {
-    newId = faculty[faculty.length - 1].id + 1;
+    newId =
+      faculty[faculty.length - 1].id + 1;
   }
 
   const newFaculty = {
@@ -65,14 +99,24 @@ async function addFaculty({
 
   saveFacultyData();
 
-  console.log("\nFaculty added successfully!");
-  console.log(`Generated Faculty ID: ${newId}`);
+  console.log(
+    chalk.green(
+      "\nFaculty added successfully!"
+    )
+  );
+
+  console.log(
+    chalk.green(
+      `Generated Faculty ID: ${newId}`
+    )
+  );
 
   await pressEnterToContinue();
 }
 
-
+// ========================================
 // UPDATE FACULTY
+// ========================================
 
 async function updateFaculty({
   faculty,
@@ -80,20 +124,36 @@ async function updateFaculty({
   pressEnterToContinue,
   saveFacultyData,
 }) {
-  console.log("\n========================================");
-  console.log("            Update Faculty");
-  console.log("========================================");
+  console.log(
+    chalk.cyan("\n========================================")
+  );
+  console.log(
+    chalk.bold.cyan("            Update Faculty")
+  );
+  console.log(
+    chalk.cyan("========================================")
+  );
 
   // Show available faculty IDs
 
-  console.log("\nAvailable Faculty:");
+  console.log(
+    chalk.bold.cyan("\nAvailable Faculty:")
+  );
 
   faculty.forEach((member) => {
-    console.log(`${member.id}. ${member.name}`);
+    console.log(
+      chalk.green(
+        `${member.id}. ${member.name}`
+      )
+    );
   });
 
   const facultyId = Number(
-    await askQuestion("\nEnter faculty ID to update: ")
+    await askQuestion(
+      chalk.yellow(
+        "\nEnter faculty ID to update: "
+      )
+    )
   );
 
   // Find faculty using ID
@@ -105,26 +165,54 @@ async function updateFaculty({
   // Check if faculty exists
 
   if (!facultyMember) {
-    console.log("\nFaculty not found.");
+    console.log(
+      chalk.red("\nFaculty not found.")
+    );
+
     await pressEnterToContinue();
     return;
   }
 
   // Display current details
 
-  console.log("\nCurrent Faculty Details");
-  console.log("----------------------------------------");
+  console.log(
+    chalk.bold.cyan(
+      "\nCurrent Faculty Details"
+    )
+  );
+
+  console.log(
+    chalk.cyan("----------------------------------------")
+  );
+
   console.log(`Name: ${facultyMember.name}`);
-  console.log(`Department: ${facultyMember.department}`);
-  console.log(`Designation: ${facultyMember.designation}`);
-  console.log(`Email: ${facultyMember.email}`);
+  console.log(
+    `Department: ${facultyMember.department}`
+  );
+  console.log(
+    `Designation: ${facultyMember.designation}`
+  );
+  console.log(
+    `Email: ${facultyMember.email}`
+  );
 
   // Get updated information
 
-  const name = await askQuestion("\nEnter new name: ");
-  const department = await askQuestion("Enter new department: ");
-  const designation = await askQuestion("Enter new designation: ");
-  const email = await askQuestion("Enter new email: ");
+  const name = await askQuestion(
+    chalk.yellow("\nEnter new name: ")
+  );
+
+  const department = await askQuestion(
+    chalk.yellow("Enter new department: ")
+  );
+
+  const designation = await askQuestion(
+    chalk.yellow("Enter new designation: ")
+  );
+
+  const email = await askQuestion(
+    chalk.yellow("Enter new email: ")
+  );
 
   // Update faculty object
 
@@ -137,13 +225,18 @@ async function updateFaculty({
 
   saveFacultyData();
 
-  console.log("\nFaculty updated successfully!");
+  console.log(
+    chalk.green(
+      "\nFaculty updated successfully!"
+    )
+  );
 
   await pressEnterToContinue();
 }
 
-
+// ========================================
 // FACULTY MANAGEMENT MENU
+// ========================================
 
 async function facultyManagement({
   faculty,
@@ -152,16 +245,49 @@ async function facultyManagement({
   saveFacultyData,
 }) {
   while (true) {
-    console.log("\n========================================");
-    console.log("          Faculty Management");
-    console.log("========================================");
-    console.log("1. Show Faculty");
-    console.log("2. Add Faculty");
-    console.log("3. Update Faculty");
-    console.log("4. Back to Main Menu");
-    console.log("========================================");
+    console.log(
+      chalk.cyan(
+        "\n========================================"
+      )
+    );
 
-    const choice = await askQuestion("Enter your choice: ");
+    console.log(
+      chalk.bold.cyan(
+        "          Faculty Management"
+      )
+    );
+
+    console.log(
+      chalk.cyan(
+        "========================================"
+      )
+    );
+
+    console.log(
+      chalk.green("1. Show Faculty")
+    );
+
+    console.log(
+      chalk.green("2. Add Faculty")
+    );
+
+    console.log(
+      chalk.green("3. Update Faculty")
+    );
+
+    console.log(
+      chalk.red("4. Back to Main Menu")
+    );
+
+    console.log(
+      chalk.cyan(
+        "========================================"
+      )
+    );
+
+    const choice = await askQuestion(
+      chalk.yellow("Enter your choice: ")
+    );
 
     switch (choice) {
       case "1":
@@ -193,7 +319,9 @@ async function facultyManagement({
         return;
 
       default:
-        console.log("\nInvalid choice.");
+        console.log(
+          chalk.red("\nInvalid choice.")
+        );
     }
   }
 }

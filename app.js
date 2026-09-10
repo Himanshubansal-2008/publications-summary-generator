@@ -1,5 +1,6 @@
 const fs = require("fs");
 const readline = require("readline");
+const chalk = require("chalk");
 
 // ========================================
 // IMPORTING MODULES
@@ -53,6 +54,18 @@ const publications =
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
+});
+
+// ========================================
+// PREVENT CTRL + C FROM EXITING
+// ========================================
+
+rl.on("SIGINT", () => {
+  console.log(
+    chalk.yellow(
+      "\nCtrl+C is disabled. Please select 7. Exit from the menu."
+    )
+  );
 });
 
 // ========================================
@@ -112,58 +125,69 @@ function savePublicationData() {
 
 async function mainMenu() {
   while (true) {
+
     console.log(
-      "\n========================================"
+      chalk.cyan(
+        "\n========================================"
+      )
     );
 
     console.log(
-      "   Publications Summary Generator"
+      chalk.bold.cyan(
+        "   Publications Summary Generator"
+      )
     );
 
     console.log(
-      "========================================"
+      chalk.cyan(
+        "========================================"
+      )
     );
 
     console.log(
-      "1. Faculty Management"
+      chalk.green("1. Faculty Management")
     );
 
     console.log(
-      "2. Publication Management"
+      chalk.green("2. Publication Management")
     );
 
     console.log(
-      "3. Search / Filter"
+      chalk.green("3. Search / Filter")
     );
 
     console.log(
-      "4. Publication Summary"
+      chalk.green("4. Publication Summary")
     );
 
     console.log(
-      "5. Export"
+      chalk.green("5. Export")
     );
 
     console.log(
-      "6. Import"
+      chalk.green("6. Import")
     );
 
     console.log(
-      "7. Exit"
+      chalk.red("7. Exit")
     );
 
     console.log(
-      "========================================"
+      chalk.cyan(
+        "========================================"
+      )
     );
 
     const choice =
       await askQuestion(
-        "Enter your choice: "
+        chalk.yellow("Enter your choice: ")
       );
 
     switch (choice) {
 
+      // ========================================
       // FACULTY MANAGEMENT
+      // ========================================
 
       case "1":
         await facultyManagement({
@@ -174,7 +198,9 @@ async function mainMenu() {
         });
         break;
 
+      // ========================================
       // PUBLICATION MANAGEMENT
+      // ========================================
 
       case "2":
         await publicationManagement({
@@ -184,10 +210,11 @@ async function mainMenu() {
           pressEnterToContinue,
           savePublicationData,
         });
-
         break;
 
+      // ========================================
       // SEARCH / FILTER
+      // ========================================
 
       case "3":
         await searchFilterMenu({
@@ -197,10 +224,11 @@ async function mainMenu() {
           pressEnterToContinue,
           showPublications,
         });
-
         break;
 
+      // ========================================
       // PUBLICATION SUMMARY
+      // ========================================
 
       case "4":
         await summaryMenu({
@@ -209,10 +237,11 @@ async function mainMenu() {
           askQuestion,
           pressEnterToContinue,
         });
-
         break;
 
+      // ========================================
       // EXPORT
+      // ========================================
 
       case "5":
         await exportMenu({
@@ -221,8 +250,11 @@ async function mainMenu() {
           askQuestion,
           pressEnterToContinue,
         });
-
         break;
+
+      // ========================================
+      // IMPORT
+      // ========================================
 
       case "6":
         await importMenu({
@@ -233,23 +265,32 @@ async function mainMenu() {
           saveFacultyData,
           savePublicationData,
         });
-
         break;
 
+      // ========================================
       // EXIT
+      // ========================================
 
       case "7":
         console.log(
-          "\nThank you for using Publications Summary Generator."
+          chalk.green(
+            "\nThank you for using Publications Summary Generator."
+          )
         );
 
         rl.close();
 
         return;
 
+      // ========================================
+      // INVALID CHOICE
+      // ========================================
+
       default:
         console.log(
-          "\nInvalid choice. Please try again."
+          chalk.red(
+            "\nInvalid choice. Please try again."
+          )
         );
     }
   }

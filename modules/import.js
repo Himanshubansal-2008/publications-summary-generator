@@ -1,6 +1,7 @@
 const fs = require("fs");
 const XLSX = require("xlsx");
 const bibtexParse = require("bibtex-parse-js");
+const chalk = require("chalk");
 
 // ========================================
 // IMPORT FACULTY FROM EXCEL
@@ -11,22 +12,36 @@ async function importFacultyFromExcel({
   askQuestion,
   saveFacultyData,
 }) {
-  console.log("\n========================================");
-  console.log("        Import Faculty from Excel");
-  console.log("========================================");
+  console.log(
+    chalk.cyan("\n========================================")
+  );
 
   console.log(
-    "\nTip: Drag the Excel file into Terminal to get its path."
+    chalk.bold.cyan(
+      "        Import Faculty from Excel"
+    )
+  );
+
+  console.log(
+    chalk.cyan("========================================")
+  );
+
+  console.log(
+    chalk.yellow(
+      "\nTip: Drag the Excel file into Terminal to get its path."
+    )
   );
 
   const filePath = await askQuestion(
-    "Enter Excel file path: "
+    chalk.yellow("Enter Excel file path: ")
   );
 
   // Check if file exists
 
   if (!fs.existsSync(filePath)) {
-    console.log("\nFile not found.");
+    console.log(
+      chalk.red("\nFile not found.")
+    );
     return;
   }
 
@@ -45,7 +60,9 @@ async function importFacultyFromExcel({
     const data = XLSX.utils.sheet_to_json(worksheet);
 
     if (data.length === 0) {
-      console.log("\nExcel file is empty.");
+      console.log(
+        chalk.yellow("\nExcel file is empty.")
+      );
       return;
     }
 
@@ -92,11 +109,15 @@ async function importFacultyFromExcel({
     saveFacultyData();
 
     console.log(
-      `\n✓ ${importedCount} faculty member(s) imported successfully.`
+      chalk.green(
+        `\n✓ ${importedCount} faculty member(s) imported successfully.`
+      )
     );
   } catch (error) {
     console.log(
-      "\nError while importing Excel file."
+      chalk.red(
+        "\nError while importing Excel file."
+      )
     );
 
     console.log(error.message);
@@ -113,22 +134,36 @@ async function importBibTeX({
   askQuestion,
   savePublicationData,
 }) {
-  console.log("\n========================================");
-  console.log("        Import Publications from BibTeX");
-  console.log("========================================");
+  console.log(
+    chalk.cyan("\n========================================")
+  );
 
   console.log(
-    "\nTip: Drag the BibTeX file into Terminal to get its path."
+    chalk.bold.cyan(
+      "        Import Publications from BibTeX"
+    )
+  );
+
+  console.log(
+    chalk.cyan("========================================")
+  );
+
+  console.log(
+    chalk.yellow(
+      "\nTip: Drag the BibTeX file into Terminal to get its path."
+    )
   );
 
   const filePath = await askQuestion(
-    "Enter BibTeX file path: "
+    chalk.yellow("Enter BibTeX file path: ")
   );
 
   // Check if file exists
 
   if (!fs.existsSync(filePath)) {
-    console.log("\nFile not found.");
+    console.log(
+      chalk.red("\nFile not found.")
+    );
     return;
   }
 
@@ -141,7 +176,9 @@ async function importBibTeX({
     );
 
     if (!bibtexData.trim()) {
-      console.log("\nBibTeX file is empty.");
+      console.log(
+        chalk.yellow("\nBibTeX file is empty.")
+      );
       return;
     }
 
@@ -153,7 +190,9 @@ async function importBibTeX({
 
     if (entries.length === 0) {
       console.log(
-        "\nNo publications found in BibTeX file."
+        chalk.yellow(
+          "\nNo publications found in BibTeX file."
+        )
       );
 
       return;
@@ -261,11 +300,15 @@ async function importBibTeX({
     savePublicationData();
 
     console.log(
-      `\n✓ ${importedCount} publication(s) imported successfully.`
+      chalk.green(
+        `\n✓ ${importedCount} publication(s) imported successfully.`
+      )
     );
   } catch (error) {
     console.log(
-      "\nError while importing BibTeX file."
+      chalk.red(
+        "\nError while importing BibTeX file."
+      )
     );
 
     console.log(error.message);
@@ -285,17 +328,53 @@ async function importMenu({
   savePublicationData,
 }) {
   while (true) {
-    console.log("\n========================================");
-    console.log("             Import Data");
-    console.log("========================================");
-    console.log("1. Import Faculty from Excel");
-    console.log("2. Import Publications from BibTeX");
-    console.log("3. Back to Main Menu");
-    console.log("========================================");
+    console.log(
+      chalk.cyan(
+        "\n========================================"
+      )
+    );
+
+    console.log(
+      chalk.bold.cyan(
+        "             Import Data"
+      )
+    );
+
+    console.log(
+      chalk.cyan(
+        "========================================"
+      )
+    );
+
+    console.log(
+      chalk.green(
+        "1. Import Faculty from Excel"
+      )
+    );
+
+    console.log(
+      chalk.green(
+        "2. Import Publications from BibTeX"
+      )
+    );
+
+    console.log(
+      chalk.red(
+        "3. Back to Main Menu"
+      )
+    );
+
+    console.log(
+      chalk.cyan(
+        "========================================"
+      )
+    );
 
     const choice =
       await askQuestion(
-        "Enter your choice: "
+        chalk.yellow(
+          "Enter your choice: "
+        )
       );
 
     switch (choice) {
@@ -327,7 +406,9 @@ async function importMenu({
 
       default:
         console.log(
-          "\nInvalid choice."
+          chalk.red(
+            "\nInvalid choice."
+          )
         );
     }
   }

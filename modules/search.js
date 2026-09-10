@@ -2,46 +2,79 @@
 // SEARCH / FILTER
 // ========================================
 
+const chalk = require("chalk");
 
+// ========================================
 // DISPLAY SEARCH RESULTS
+// ========================================
 
 function displayPublicationResults({
   results,
   faculty,
 }) {
-  console.log("\n========================================");
-  console.log("          Search Results");
-  console.log("========================================");
+  console.log(
+    chalk.cyan("\n========================================")
+  );
+
+  console.log(
+    chalk.bold.cyan("          Search Results")
+  );
+
+  console.log(
+    chalk.cyan("========================================")
+  );
 
   if (results.length === 0) {
-    console.log("No publications found.");
+    console.log(
+      chalk.yellow("No publications found.")
+    );
   } else {
     results.forEach((publication, index) => {
       const facultyMembers = faculty.filter(
-        (member) => publication.facultyIds.includes(member.id)
+        (member) =>
+          publication.facultyIds.includes(member.id)
       );
 
-      console.log(`${index + 1}. ${publication.title}`);
+      console.log(
+        chalk.bold(
+          `${index + 1}. ${publication.title}`
+        )
+      );
 
       console.log(
         `   Faculty: ${
           facultyMembers.length > 0
-            ? facultyMembers.map((member) => member.name).join(", ")
+            ? facultyMembers
+                .map((member) => member.name)
+                .join(", ")
             : "Unknown"
         }`
       );
 
-      console.log(`   Year: ${publication.year}`);
-      console.log(`   Type: ${publication.type}`);
-      console.log(`   Venue: ${publication.venue}`);
+      console.log(
+        `   Year: ${publication.year}`
+      );
 
-      console.log("----------------------------------------");
+      console.log(
+        `   Type: ${publication.type}`
+      );
+
+      console.log(
+        `   Venue: ${publication.venue}`
+      );
+
+      console.log(
+        chalk.cyan(
+          "----------------------------------------"
+        )
+      );
     });
   }
 }
 
-
+// ========================================
 // SEARCH BY FACULTY
+// ========================================
 
 async function searchByFaculty({
   faculty,
@@ -49,18 +82,27 @@ async function searchByFaculty({
   askQuestion,
   pressEnterToContinue,
 }) {
-  console.log("\nAvailable Faculty:");
+  console.log(
+    chalk.bold.cyan("\nAvailable Faculty:")
+  );
 
   faculty.forEach((member) => {
-    console.log(`${member.id}. ${member.name}`);
+    console.log(
+      chalk.green(
+        `${member.id}. ${member.name}`
+      )
+    );
   });
 
   const facultyId = Number(
-    await askQuestion("\nEnter faculty ID: ")
+    await askQuestion(
+      chalk.yellow("\nEnter faculty ID: ")
+    )
   );
 
   const results = publications.filter(
-    (publication) => publication.facultyIds.includes(facultyId)
+    (publication) =>
+      publication.facultyIds.includes(facultyId)
   );
 
   displayPublicationResults({
@@ -71,8 +113,9 @@ async function searchByFaculty({
   await pressEnterToContinue();
 }
 
-
+// ========================================
 // FILTER BY YEAR
+// ========================================
 
 async function filterByYear({
   faculty,
@@ -81,17 +124,25 @@ async function filterByYear({
   pressEnterToContinue,
 }) {
   const year = Number(
-    await askQuestion("Enter year: ")
+    await askQuestion(
+      chalk.yellow("Enter year: ")
+    )
   );
 
   if (isNaN(year)) {
-    console.log("\nPlease enter a valid year.");
+    console.log(
+      chalk.red(
+        "\nPlease enter a valid year."
+      )
+    );
+
     await pressEnterToContinue();
     return;
   }
 
   const results = publications.filter(
-    (publication) => publication.year === year
+    (publication) =>
+      publication.year === year
   );
 
   displayPublicationResults({
@@ -102,8 +153,9 @@ async function filterByYear({
   await pressEnterToContinue();
 }
 
-
+// ========================================
 // FILTER BY YEAR RANGE
+// ========================================
 
 async function filterByYearRange({
   faculty,
@@ -112,22 +164,36 @@ async function filterByYearRange({
   pressEnterToContinue,
 }) {
   const startYear = Number(
-    await askQuestion("Enter start year: ")
+    await askQuestion(
+      chalk.yellow("Enter start year: ")
+    )
   );
 
   const endYear = Number(
-    await askQuestion("Enter end year: ")
+    await askQuestion(
+      chalk.yellow("Enter end year: ")
+    )
   );
 
-  if (isNaN(startYear) || isNaN(endYear)) {
-    console.log("\nPlease enter valid years.");
+  if (
+    isNaN(startYear) ||
+    isNaN(endYear)
+  ) {
+    console.log(
+      chalk.red(
+        "\nPlease enter valid years."
+      )
+    );
+
     await pressEnterToContinue();
     return;
   }
 
   if (startYear > endYear) {
     console.log(
-      "\nStart year cannot be greater than end year."
+      chalk.red(
+        "\nStart year cannot be greater than end year."
+      )
     );
 
     await pressEnterToContinue();
@@ -148,8 +214,9 @@ async function filterByYearRange({
   await pressEnterToContinue();
 }
 
-
+// ========================================
 // FILTER BY PUBLICATION TYPE
+// ========================================
 
 async function filterByType({
   faculty,
@@ -158,7 +225,9 @@ async function filterByType({
   pressEnterToContinue,
 }) {
   const type = await askQuestion(
-    "Enter type (Journal / Conference): "
+    chalk.yellow(
+      "Enter type (Journal / Conference): "
+    )
   );
 
   const results = publications.filter(
@@ -175,8 +244,9 @@ async function filterByType({
   await pressEnterToContinue();
 }
 
-
+// ========================================
 // SEARCH BY PUBLICATION TITLE
+// ========================================
 
 async function searchByTitle({
   faculty,
@@ -185,7 +255,9 @@ async function searchByTitle({
   pressEnterToContinue,
 }) {
   const title = await askQuestion(
-    "Enter title to search: "
+    chalk.yellow(
+      "Enter title to search: "
+    )
   );
 
   const results = publications.filter(
@@ -203,8 +275,9 @@ async function searchByTitle({
   await pressEnterToContinue();
 }
 
-
+// ========================================
 // SEARCH / FILTER MENU
+// ========================================
 
 async function searchFilterMenu({
   faculty,
@@ -214,20 +287,70 @@ async function searchFilterMenu({
   showPublications,
 }) {
   while (true) {
-    console.log("\n========================================");
-    console.log("          Search / Filter");
-    console.log("========================================");
-    console.log("1. Search by Faculty");
-    console.log("2. Filter by Year");
-    console.log("3. Filter by Year Range");
-    console.log("4. Filter by Publication Type");
-    console.log("5. Search by Publication Title");
-    console.log("6. Show All Publications");
-    console.log("7. Back to Main Menu");
-    console.log("========================================");
+    console.log(
+      chalk.cyan(
+        "\n========================================"
+      )
+    );
+
+    console.log(
+      chalk.bold.cyan(
+        "          Search / Filter"
+      )
+    );
+
+    console.log(
+      chalk.cyan(
+        "========================================"
+      )
+    );
+
+    console.log(
+      chalk.green("1. Search by Faculty")
+    );
+
+    console.log(
+      chalk.green("2. Filter by Year")
+    );
+
+    console.log(
+      chalk.green("3. Filter by Year Range")
+    );
+
+    console.log(
+      chalk.green(
+        "4. Filter by Publication Type"
+      )
+    );
+
+    console.log(
+      chalk.green(
+        "5. Search by Publication Title"
+      )
+    );
+
+    console.log(
+      chalk.green(
+        "6. Show All Publications"
+      )
+    );
+
+    console.log(
+      chalk.red(
+        "7. Back to Main Menu"
+      )
+    );
+
+    console.log(
+      chalk.cyan(
+        "========================================"
+      )
+    );
 
     const choice = await askQuestion(
-      "Enter your choice: "
+      chalk.yellow(
+        "Enter your choice: "
+      )
     );
 
     switch (choice) {
@@ -287,7 +410,9 @@ async function searchFilterMenu({
         return;
 
       default:
-        console.log("\nInvalid choice.");
+        console.log(
+          chalk.red("\nInvalid choice.")
+        );
     }
   }
 }

@@ -1,3 +1,5 @@
+const chalk = require("chalk");
+
 // ========================================
 // PUBLICATION SUMMARY
 // ========================================
@@ -18,21 +20,40 @@ function getFacultyPublications(
 ) {
   return publications.filter(
     (publication) =>
+      Array.isArray(publication.facultyIds) &&
       publication.facultyIds.includes(facultyId)
   );
+}
+
+// GET VALID PUBLICATION YEAR
+
+function getValidYear(publication) {
+  const year = Number(publication.year);
+
+  if (Number.isInteger(year) && year > 0) {
+    return year;
+  }
+
+  return null;
 }
 
 // SHOW AVAILABLE FACULTY
 
 function showAvailableFaculty(faculty) {
-  console.log("\nAvailable Faculty:");
+  console.log(
+    chalk.bold.cyan("\nAvailable Faculty:")
+  );
 
   faculty.forEach((member) => {
-    console.log(`${member.id}. ${member.name}`);
+    console.log(
+      chalk.green(`${member.id}. ${member.name}`)
+    );
   });
 }
 
+// ========================================
 // YEAR-WISE SUMMARY
+// ========================================
 
 async function generateYearWiseSummary({
   faculty,
@@ -40,14 +61,26 @@ async function generateYearWiseSummary({
   askQuestion,
   pressEnterToContinue,
 }) {
-  console.log("\n========================================");
-  console.log("       Year-wise Publication Summary");
-  console.log("========================================");
+  console.log(
+    chalk.cyan("\n========================================")
+  );
+
+  console.log(
+    chalk.bold.cyan(
+      "       Year-wise Publication Summary"
+    )
+  );
+
+  console.log(
+    chalk.cyan("========================================")
+  );
 
   showAvailableFaculty(faculty);
 
   const facultyId = Number(
-    await askQuestion("\nEnter Faculty ID: ")
+    await askQuestion(
+      chalk.yellow("\nEnter Faculty ID: ")
+    )
   );
 
   const facultyMember = getFacultyById(
@@ -56,7 +89,10 @@ async function generateYearWiseSummary({
   );
 
   if (!facultyMember) {
-    console.log("\nFaculty not found.");
+    console.log(
+      chalk.red("\nFaculty not found.")
+    );
+
     await pressEnterToContinue();
     return;
   }
@@ -69,20 +105,24 @@ async function generateYearWiseSummary({
 
   if (facultyPublications.length === 0) {
     console.log(
-      `\nNo publications found for ${facultyMember.name}.`
+      chalk.yellow(
+        `\nNo publications found for ${facultyMember.name}.`
+      )
     );
 
     await pressEnterToContinue();
     return;
   }
 
-  // Get unique years
+  // Get unique valid years
 
   const years = [
     ...new Set(
-      facultyPublications.map(
-        (publication) => publication.year
-      )
+      facultyPublications
+        .map((publication) =>
+          getValidYear(publication)
+        )
+        .filter((year) => year !== null)
     ),
   ];
 
@@ -90,14 +130,20 @@ async function generateYearWiseSummary({
 
   years.sort((a, b) => a - b);
 
-  console.log(`\nFaculty: ${facultyMember.name}`);
-
   console.log(
-    "\nYear       Journal    Conference    Total"
+    `\nFaculty: ${facultyMember.name}`
   );
 
   console.log(
-    "--------------------------------------------"
+    chalk.bold(
+      "\nYear       Journal    Conference    Total"
+    )
+  );
+
+  console.log(
+    chalk.cyan(
+      "--------------------------------------------"
+    )
   );
 
   let totalJournal = 0;
@@ -107,18 +153,20 @@ async function generateYearWiseSummary({
     const yearPublications =
       facultyPublications.filter(
         (publication) =>
-          publication.year === year
+          getValidYear(publication) === year
       );
 
     const journalCount =
       yearPublications.filter(
         (publication) =>
+          publication.type &&
           publication.type.toLowerCase() === "journal"
       ).length;
 
     const conferenceCount =
       yearPublications.filter(
         (publication) =>
+          publication.type &&
           publication.type.toLowerCase() === "conference"
       ).length;
 
@@ -133,19 +181,25 @@ async function generateYearWiseSummary({
   });
 
   console.log(
-    "--------------------------------------------"
+    chalk.cyan(
+      "--------------------------------------------"
+    )
   );
 
   console.log(
-    `Total       ${totalJournal}          ${totalConference}          ${
-      totalJournal + totalConference
-    }`
+    chalk.bold(
+      `Total       ${totalJournal}          ${totalConference}          ${
+        totalJournal + totalConference
+      }`
+    )
   );
 
   await pressEnterToContinue();
 }
 
+// ========================================
 // CUSTOM YEAR RANGE SUMMARY
+// ========================================
 
 async function generateCustomRangeSummary({
   faculty,
@@ -153,14 +207,26 @@ async function generateCustomRangeSummary({
   askQuestion,
   pressEnterToContinue,
 }) {
-  console.log("\n========================================");
-  console.log("       Custom Publication Summary");
-  console.log("========================================");
+  console.log(
+    chalk.cyan("\n========================================")
+  );
+
+  console.log(
+    chalk.bold.cyan(
+      "       Custom Publication Summary"
+    )
+  );
+
+  console.log(
+    chalk.cyan("========================================")
+  );
 
   showAvailableFaculty(faculty);
 
   const facultyId = Number(
-    await askQuestion("\nEnter Faculty ID: ")
+    await askQuestion(
+      chalk.yellow("\nEnter Faculty ID: ")
+    )
   );
 
   const facultyMember = getFacultyById(
@@ -169,28 +235,45 @@ async function generateCustomRangeSummary({
   );
 
   if (!facultyMember) {
-    console.log("\nFaculty not found.");
+    console.log(
+      chalk.red("\nFaculty not found.")
+    );
+
     await pressEnterToContinue();
     return;
   }
 
   const startYear = Number(
-    await askQuestion("Enter start year: ")
+    await askQuestion(
+      chalk.yellow("Enter start year: ")
+    )
   );
 
   const endYear = Number(
-    await askQuestion("Enter end year: ")
+    await askQuestion(
+      chalk.yellow("Enter end year: ")
+    )
   );
 
-  if (isNaN(startYear) || isNaN(endYear)) {
-    console.log("\nPlease enter valid years.");
+  if (
+    !Number.isInteger(startYear) ||
+    !Number.isInteger(endYear) ||
+    startYear <= 0 ||
+    endYear <= 0
+  ) {
+    console.log(
+      chalk.red("\nPlease enter valid years.")
+    );
+
     await pressEnterToContinue();
     return;
   }
 
   if (startYear > endYear) {
     console.log(
-      "\nStart year cannot be greater than end year."
+      chalk.red(
+        "\nStart year cannot be greater than end year."
+      )
     );
 
     await pressEnterToContinue();
@@ -204,23 +287,29 @@ async function generateCustomRangeSummary({
     );
 
   const results =
-    facultyPublications.filter(
-      (publication) =>
-        publication.year >= startYear &&
-        publication.year <= endYear
-    );
+    facultyPublications.filter((publication) => {
+      const year = getValidYear(publication);
+
+      return (
+        year !== null &&
+        year >= startYear &&
+        year <= endYear
+      );
+    });
 
   let journalCount = 0;
   let conferenceCount = 0;
 
   results.forEach((publication) => {
     if (
+      publication.type &&
       publication.type.toLowerCase() === "journal"
     ) {
       journalCount++;
     }
 
     if (
+      publication.type &&
       publication.type.toLowerCase() === "conference"
     ) {
       conferenceCount++;
@@ -235,7 +324,11 @@ async function generateCustomRangeSummary({
     `Period: ${startYear} - ${endYear}`
   );
 
-  console.log("\n----------------------------------------");
+  console.log(
+    chalk.cyan(
+      "\n----------------------------------------"
+    )
+  );
 
   console.log(
     "Journal Publications    :",
@@ -248,22 +341,32 @@ async function generateCustomRangeSummary({
   );
 
   console.log(
-    "Total Publications      :",
+    chalk.bold(
+      "Total Publications      :"
+    ),
     results.length
   );
 
-  console.log("----------------------------------------");
+  console.log(
+    chalk.cyan(
+      "----------------------------------------"
+    )
+  );
 
   if (results.length === 0) {
     console.log(
-      "\nNo publications found in this period."
+      chalk.yellow(
+        "\nNo publications found in this period."
+      )
     );
   }
 
   await pressEnterToContinue();
 }
 
+// ========================================
 // FACULTY PUBLICATION SUMMARY
+// ========================================
 
 async function generateFacultySummary({
   faculty,
@@ -271,14 +374,26 @@ async function generateFacultySummary({
   askQuestion,
   pressEnterToContinue,
 }) {
-  console.log("\n========================================");
-  console.log("        Faculty Publication Summary");
-  console.log("========================================");
+  console.log(
+    chalk.cyan("\n========================================")
+  );
+
+  console.log(
+    chalk.bold.cyan(
+      "        Faculty Publication Summary"
+    )
+  );
+
+  console.log(
+    chalk.cyan("========================================")
+  );
 
   showAvailableFaculty(faculty);
 
   const facultyId = Number(
-    await askQuestion("\nEnter Faculty ID: ")
+    await askQuestion(
+      chalk.yellow("\nEnter Faculty ID: ")
+    )
   );
 
   const facultyMember = getFacultyById(
@@ -287,7 +402,10 @@ async function generateFacultySummary({
   );
 
   if (!facultyMember) {
-    console.log("\nFaculty not found.");
+    console.log(
+      chalk.red("\nFaculty not found.")
+    );
+
     await pressEnterToContinue();
     return;
   }
@@ -300,7 +418,9 @@ async function generateFacultySummary({
 
   if (facultyPublications.length === 0) {
     console.log(
-      `\nNo publications found for ${facultyMember.name}.`
+      chalk.yellow(
+        `\nNo publications found for ${facultyMember.name}.`
+      )
     );
 
     await pressEnterToContinue();
@@ -310,12 +430,14 @@ async function generateFacultySummary({
   const journalCount =
     facultyPublications.filter(
       (publication) =>
+        publication.type &&
         publication.type.toLowerCase() === "journal"
     ).length;
 
   const conferenceCount =
     facultyPublications.filter(
       (publication) =>
+        publication.type &&
         publication.type.toLowerCase() === "conference"
     ).length;
 
@@ -323,7 +445,11 @@ async function generateFacultySummary({
     `\nFaculty: ${facultyMember.name}`
   );
 
-  console.log("\n----------------------------------------");
+  console.log(
+    chalk.cyan(
+      "\n----------------------------------------"
+    )
+  );
 
   console.log(
     "Total Publications :",
@@ -340,16 +466,27 @@ async function generateFacultySummary({
     conferenceCount
   );
 
-  console.log("----------------------------------------");
+  console.log(
+    chalk.cyan(
+      "----------------------------------------"
+    )
+  );
 
-  console.log("\nPublications by Year");
-  console.log("--------------------");
+  console.log(
+    chalk.bold("\nPublications by Year")
+  );
+
+  console.log(
+    chalk.cyan("--------------------")
+  );
 
   const years = [
     ...new Set(
-      facultyPublications.map(
-        (publication) => publication.year
-      )
+      facultyPublications
+        .map((publication) =>
+          getValidYear(publication)
+        )
+        .filter((year) => year !== null)
     ),
   ];
 
@@ -359,7 +496,7 @@ async function generateFacultySummary({
     const count =
       facultyPublications.filter(
         (publication) =>
-          publication.year === year
+          getValidYear(publication) === year
       ).length;
 
     console.log(`${year} : ${count}`);
@@ -379,17 +516,56 @@ async function summaryMenu({
   pressEnterToContinue,
 }) {
   while (true) {
-    console.log("\n========================================");
-    console.log("        Publication Summary");
-    console.log("========================================");
-    console.log("1. Year-wise Summary");
-    console.log("2. Custom Year Range Summary");
-    console.log("3. Faculty Publication Summary");
-    console.log("4. Back to Main Menu");
-    console.log("========================================");
+    console.log(
+      chalk.cyan(
+        "\n========================================"
+      )
+    );
+
+    console.log(
+      chalk.bold.cyan(
+        "        Publication Summary"
+      )
+    );
+
+    console.log(
+      chalk.cyan(
+        "========================================"
+      )
+    );
+
+    console.log(
+      chalk.green("1. Year-wise Summary")
+    );
+
+    console.log(
+      chalk.green(
+        "2. Custom Year Range Summary"
+      )
+    );
+
+    console.log(
+      chalk.green(
+        "3. Faculty Publication Summary"
+      )
+    );
+
+    console.log(
+      chalk.red(
+        "4. Back to Main Menu"
+      )
+    );
+
+    console.log(
+      chalk.cyan(
+        "========================================"
+      )
+    );
 
     const choice = await askQuestion(
-      "Enter your choice: "
+      chalk.yellow(
+        "Enter your choice: "
+      )
     );
 
     switch (choice) {
@@ -424,7 +600,9 @@ async function summaryMenu({
         return;
 
       default:
-        console.log("\nInvalid choice.");
+        console.log(
+          chalk.red("\nInvalid choice.")
+        );
     }
   }
 }

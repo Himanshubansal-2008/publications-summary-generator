@@ -4,6 +4,7 @@
 
 const fs = require("fs");
 const XLSX = require("xlsx");
+const chalk = require("chalk");
 
 const {
   Document,
@@ -43,10 +44,14 @@ function getFacultyPublications(
 // SHOW AVAILABLE FACULTY
 
 function showAvailableFaculty(faculty) {
-  console.log("\nAvailable Faculty:");
+  console.log(
+    chalk.bold.cyan("\nAvailable Faculty:")
+  );
 
   faculty.forEach((member) => {
-    console.log(`${member.id}. ${member.name}`);
+    console.log(
+      chalk.green(`${member.id}. ${member.name}`)
+    );
   });
 }
 
@@ -68,7 +73,9 @@ function exportToExcel({
   // Check if faculty exists
 
   if (!selectedFaculty) {
-    console.log("\nFaculty not found.");
+    console.log(
+      chalk.red("\nFaculty not found.")
+    );
     return;
   }
 
@@ -84,7 +91,9 @@ function exportToExcel({
 
   if (facultyPublications.length === 0) {
     console.log(
-      `\nNo publications found for ${selectedFaculty.name}.`
+      chalk.yellow(
+        `\nNo publications found for ${selectedFaculty.name}.`
+      )
     );
     return;
   }
@@ -186,7 +195,9 @@ function exportToExcel({
   );
 
   console.log(
-    "\n✓ Excel file exported successfully!"
+    chalk.green(
+      "\n✓ Excel file exported successfully!"
+    )
   );
 
   console.log(
@@ -216,7 +227,9 @@ async function exportToWord({
   // Check if faculty exists
 
   if (!selectedFaculty) {
-    console.log("\nFaculty not found.");
+    console.log(
+      chalk.red("\nFaculty not found.")
+    );
     return;
   }
 
@@ -232,7 +245,9 @@ async function exportToWord({
 
   if (facultyPublications.length === 0) {
     console.log(
-      `\nNo publications found for ${selectedFaculty.name}.`
+      chalk.yellow(
+        `\nNo publications found for ${selectedFaculty.name}.`
+      )
     );
     return;
   }
@@ -445,7 +460,9 @@ async function exportToWord({
   );
 
   console.log(
-    "\n✓ Word file exported successfully!"
+    chalk.green(
+      "\n✓ Word file exported successfully!"
+    )
   );
 
   console.log(
@@ -469,24 +486,46 @@ async function exportMenu({
 }) {
   while (true) {
     console.log(
-      "\n========================================"
+      chalk.cyan(
+        "\n========================================"
+      )
     );
+
     console.log(
-      "        Export Publication Summary"
+      chalk.bold.cyan(
+        "        Export Publication Summary"
+      )
     );
+
     console.log(
-      "========================================"
+      chalk.cyan(
+        "========================================"
+      )
     );
-    console.log("1. Export to Excel");
-    console.log("2. Export to Word");
-    console.log("3. Back to Main Menu");
+
     console.log(
-      "========================================"
+      chalk.green("1. Export to Excel")
+    );
+
+    console.log(
+      chalk.green("2. Export to Word")
+    );
+
+    console.log(
+      chalk.red("3. Back to Main Menu")
+    );
+
+    console.log(
+      chalk.cyan(
+        "========================================"
+      )
     );
 
     const choice =
       await askQuestion(
-        "Enter your choice: "
+        chalk.yellow(
+          "Enter your choice: "
+        )
       );
 
     switch (choice) {
@@ -500,7 +539,9 @@ async function exportMenu({
 
         const facultyId = Number(
           await askQuestion(
-            "\nEnter Faculty ID: "
+            chalk.yellow(
+              "\nEnter Faculty ID: "
+            )
           )
         );
 
@@ -524,7 +565,9 @@ async function exportMenu({
 
         const facultyId = Number(
           await askQuestion(
-            "\nEnter Faculty ID: "
+            chalk.yellow(
+              "\nEnter Faculty ID: "
+            )
           )
         );
 
@@ -546,7 +589,9 @@ async function exportMenu({
 
       default:
         console.log(
-          "\nInvalid choice."
+          chalk.red(
+            "\nInvalid choice."
+          )
         );
     }
   }

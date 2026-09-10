@@ -2,36 +2,59 @@
 // PUBLICATION MANAGEMENT
 // ========================================
 
+const chalk = require("chalk");
+
+// ========================================
 // SHOW PUBLICATIONS
+// ========================================
 
 async function showPublications({
   publications,
   pressEnterToContinue,
 }) {
-  console.log("\n========================================");
-  console.log("             Publications");
-  console.log("========================================");
+  console.log(
+    chalk.cyan("\n========================================")
+  );
+
+  console.log(
+    chalk.bold.cyan("             Publications")
+  );
+
+  console.log(
+    chalk.cyan("========================================")
+  );
 
   if (publications.length === 0) {
-    console.log("No publications found.");
+    console.log(
+      chalk.yellow("No publications found.")
+    );
   } else {
     publications.forEach((publication) => {
       console.log(`ID: ${publication.id}`);
       console.log(`Title: ${publication.title}`);
-      console.log(`Faculty IDs: ${publication.facultyIds.join(", ")}`);
+      console.log(
+        `Faculty IDs: ${publication.facultyIds.join(", ")}`
+      );
       console.log(`Type: ${publication.type}`);
       console.log(`Year: ${publication.year}`);
       console.log(`Venue: ${publication.venue}`);
       console.log(`DOI: ${publication.doi}`);
-      console.log(`Authors: ${publication.authors.join(", ")}`);
-      console.log("----------------------------------------");
+      console.log(
+        `Authors: ${publication.authors.join(", ")}`
+      );
+
+      console.log(
+        chalk.cyan("----------------------------------------")
+      );
     });
   }
 
   await pressEnterToContinue();
 }
 
+// ========================================
 // ADD PUBLICATION
+// ========================================
 
 async function addPublication({
   publications,
@@ -40,22 +63,40 @@ async function addPublication({
   pressEnterToContinue,
   savePublicationData,
 }) {
-  console.log("\n========================================");
-  console.log("           Add Publication");
-  console.log("========================================");
+  console.log(
+    chalk.cyan("\n========================================")
+  );
 
-  const title = await askQuestion("Enter title: ");
+  console.log(
+    chalk.bold.cyan("           Add Publication")
+  );
+
+  console.log(
+    chalk.cyan("========================================")
+  );
+
+  const title = await askQuestion(
+    chalk.yellow("Enter title: ")
+  );
 
   // Show available faculty
 
-  console.log("\nAvailable Faculty:");
+  console.log(
+    chalk.bold.cyan("\nAvailable Faculty:")
+  );
 
   faculty.forEach((member) => {
-    console.log(`${member.id}. ${member.name}`);
+    console.log(
+      chalk.green(
+        `${member.id}. ${member.name}`
+      )
+    );
   });
 
   const facultyInput = await askQuestion(
-    "Enter faculty IDs separated by commas: "
+    chalk.yellow(
+      "Enter faculty IDs separated by commas: "
+    )
   );
 
   // Convert faculty IDs into an array
@@ -66,29 +107,48 @@ async function addPublication({
 
   // Check if all faculty exist
 
-  const facultyExists = facultyIds.every((facultyId) =>
-    faculty.some((member) => member.id === facultyId)
+  const facultyExists = facultyIds.every(
+    (facultyId) =>
+      faculty.some(
+        (member) => member.id === facultyId
+      )
   );
 
   if (!facultyExists) {
-    console.log("\nOne or more faculty members not found.");
+    console.log(
+      chalk.red(
+        "\nOne or more faculty members not found."
+      )
+    );
+
     await pressEnterToContinue();
     return;
   }
 
   const type = await askQuestion(
-    "Enter type (Journal / Conference): "
+    chalk.yellow(
+      "Enter type (Journal / Conference): "
+    )
   );
 
   const year = Number(
-    await askQuestion("Enter year: ")
+    await askQuestion(
+      chalk.yellow("Enter year: ")
+    )
   );
 
-  const venue = await askQuestion("Enter venue: ");
-  const doi = await askQuestion("Enter DOI: ");
+  const venue = await askQuestion(
+    chalk.yellow("Enter venue: ")
+  );
+
+  const doi = await askQuestion(
+    chalk.yellow("Enter DOI: ")
+  );
 
   const authorsInput = await askQuestion(
-    "Enter authors (separated by commas): "
+    chalk.yellow(
+      "Enter authors (separated by commas): "
+    )
   );
 
   // Generate new publication ID
@@ -96,7 +156,10 @@ async function addPublication({
   let newId = 1;
 
   if (publications.length > 0) {
-    newId = publications[publications.length - 1].id + 1;
+    newId =
+      publications[
+        publications.length - 1
+      ].id + 1;
   }
 
   // Convert authors into an array
@@ -122,8 +185,17 @@ async function addPublication({
 
   savePublicationData();
 
-  console.log("\nPublication added successfully!");
-  console.log(`Generated Publication ID: ${newId}`);
+  console.log(
+    chalk.green(
+      "\nPublication added successfully!"
+    )
+  );
+
+  console.log(
+    chalk.green(
+      `Generated Publication ID: ${newId}`
+    )
+  );
 
   await pressEnterToContinue();
 }
@@ -140,15 +212,47 @@ async function publicationManagement({
   savePublicationData,
 }) {
   while (true) {
-    console.log("\n========================================");
-    console.log("        Publication Management");
-    console.log("========================================");
-    console.log("1. Show Publications");
-    console.log("2. Add Publication");
-    console.log("3. Back to Main Menu");
-    console.log("========================================");
+    console.log(
+      chalk.cyan(
+        "\n========================================"
+      )
+    );
 
-    const choice = await askQuestion("Enter your choice: ");
+    console.log(
+      chalk.bold.cyan(
+        "        Publication Management"
+      )
+    );
+
+    console.log(
+      chalk.cyan(
+        "========================================"
+      )
+    );
+
+    console.log(
+      chalk.green("1. Show Publications")
+    );
+
+    console.log(
+      chalk.green("2. Add Publication")
+    );
+
+    console.log(
+      chalk.red("3. Back to Main Menu")
+    );
+
+    console.log(
+      chalk.cyan(
+        "========================================"
+      )
+    );
+
+    const choice = await askQuestion(
+      chalk.yellow(
+        "Enter your choice: "
+      )
+    );
 
     switch (choice) {
       case "1":
@@ -172,7 +276,9 @@ async function publicationManagement({
         return;
 
       default:
-        console.log("\nInvalid choice.");
+        console.log(
+          chalk.red("\nInvalid choice.")
+        );
     }
   }
 }
@@ -182,4 +288,4 @@ module.exports = {
   showPublications,
 };
 
-// showPublications is separately exported becauase to use this in search/filter
+// showPublications is separately exported because it is used in search/filter
